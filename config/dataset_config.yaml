@@ -1,0 +1,31 @@
+dataset:
+  path: /raid/datasets/trossen/dataset/handover-cube_rand
+video_angles:
+  observation.images.cam_high: cam_high
+  observation.images.cam_left_wrist: cam_left_wrist
+  observation.images.cam_low: cam_low
+  observation.images.cam_right_wrist: cam_right_wrist
+
+# Joints mapping. Empty objects {} or null values trigger the default configuration.
+joints:
+  left_joint_0.pos: {}
+  left_joint_1.pos: {}
+  left_joint_2.pos: {}
+  left_joint_3.pos: {}
+  left_joint_4.pos: {}
+  left_joint_5.pos: {}
+  left_left_carriage_joint.pos:
+    rep: ABSOLUTE
+    type: NON_EEF
+    format: DEFAULT
+
+  right_joint_0.pos: {}
+  right_joint_1.pos: {}
+  right_joint_2.pos: {}
+  right_joint_3.pos: {}
+  right_joint_4.pos: {}
+  right_joint_5.pos: {}
+  right_left_carriage_joint.pos:
+    rep: ABSOLUTE
+    type: NON_EEF
+    format: DEFAULT

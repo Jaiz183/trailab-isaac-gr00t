@@ -2,7 +2,7 @@
 
 export DATASET="/raid/datasets/trossen/dataset/handover-cube_rand"
 export NUM_GPUS=2
-export PREP_MODALITY_FILE="/home/trossen/Desktop/models/gr00t/prepare_modality_config.py"
+export PREP_MODALITY_FILE="/home/trossen/Desktop/models/trailab-isaac-gr00t/prepare_modality_config.py"
 export OUTPUT_DIR="/raid/datasets/trossen/results/gr00t_handover-cube_rand"
 export MASTER_PORT=29500
 

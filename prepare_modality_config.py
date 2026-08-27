@@ -91,5 +91,5 @@ def register_custom_embodiment(yaml_path: str) -> None:
 
 
 register_custom_embodiment(
-    "/home/trossen/Desktop/models/gr00t/config/dataset_config.yaml"
+    "/home/trossen/Desktop/models/trailab-isaac-gr00t/config/dataset_config.yaml"
 )
