@@ -72,6 +72,9 @@ def build_modality_config(
             modality_keys=action_keys,
             action_configs=action_configs,
         ),
+        "language": ModalityConfig(
+            delta_indices=[0], modality_keys=["annotation.human.task_description"]
+        ),
     }
 
     return modality_config

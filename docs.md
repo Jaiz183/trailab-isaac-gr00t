@@ -10,3 +10,6 @@
 - Any changes in access => log in again with revalidated access token
 ## Helpful Commands
 - `rsync -avzP` - archive folders, verbose, compress and extract w/o intermediate files, progress
+## Gr00t Peculiarities
+- Suggests excluding annotation key from modality.json in docs, but requires annotation key for finetuning
+- Annotation keys must be named in a specific format

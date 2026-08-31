@@ -173,4 +173,4 @@ offline_open_loop_eval_plots/
 singularity/
 
 # Wheels and packages
-scripts/deployment/jetson/wheels/
+*.whl

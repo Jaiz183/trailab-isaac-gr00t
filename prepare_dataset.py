@@ -25,7 +25,12 @@ def create_modality_file(joints: list[str], video_angles_map: dict[str, str]) ->
     action_config = create_action_config(joints)
     state_config = action_config
     video_config = create_video_config(video_angles_map)
-    return {"state": state_config, "action": action_config, "video": video_config}
+    return {
+        "state": state_config,
+        "action": action_config,
+        "video": video_config,
+        "annotation": {"human.task_description": {"original_key": "task_index"}},
+    }
 
 
 def parse_args():
@@ -41,9 +46,11 @@ def parse_args():
     )
     return parser.parse_args()
 
+
 def get_local_codebase_version(dataset_dir: str, dataset_name: str) -> str | None:
     """Read the codebase_version directly from the dataset's meta/info.json.
-    Returns None if the file or key doesn't exist (e.g. dataset not yet converted at all)."""
+    Returns None if the file or key doesn't exist (e.g. dataset not yet converted at all).
+    """
     info_path = os.path.join(dataset_dir, dataset_name, "meta", "info.json")
     if not os.path.exists(info_path):
         return None
@@ -70,7 +77,9 @@ if __name__ == "__main__":
     current_version = get_local_codebase_version(dataset_dir, dataset_name)
 
     if current_version == "v2.1" or current_version == "v2.0":
-        print(f"Dataset '{dataset_name}' is already in local format (codebase_version={current_version}) — skipping conversion.")
+        print(
+            f"Dataset '{dataset_name}' is already in local format (codebase_version={current_version}) — skipping conversion."
+        )
     else:
         print(f"Running conversion script on '{dataset_name}' at '{dataset_dir}'...")
         subprocess.run(

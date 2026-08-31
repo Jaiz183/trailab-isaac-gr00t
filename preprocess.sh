@@ -1,10 +1,4 @@
 #!/bin/bash
-# start singularity shell w/ appropriate bindings
-singularity shell --nv \
-  -B /raid/datasets/trossen:/raid/datasets/trossen \
-  -B /home/trossen/Desktop/models/trailab-isaac-gr00t:/home/trossen/Desktop/models/trailab-isaac-gr00t \
-  --pwd /home/trossen/Desktop/models/trailab-isaac-gr00t \
-  singularity/gr00t.sif
 # conversion uses it's own environment
 # need to avoid fetching outdated test artifacts (don't need to run tests anyway)
 git config --global lfs.fetchexclude "tests/artifacts"
