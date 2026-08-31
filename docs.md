@@ -21,3 +21,5 @@ singularity shell --nv \
 ## Gr00t Peculiarities
 - Suggests excluding annotation key from modality.json in docs, but requires annotation key for finetuning
 - Annotation keys must be named in a specific format
+## Git
+- Push and pull in singularity because git-lfs is needed
