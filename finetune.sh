@@ -1,12 +1,12 @@
 #!/bin/bash
-
 export DATASET="/raid/datasets/trossen/dataset/handover-cube_rand"
 export NUM_GPUS=2
 export PREP_MODALITY_FILE="/home/trossen/Desktop/models/trailab-isaac-gr00t/prepare_modality_config.py"
 export OUTPUT_DIR="/raid/datasets/trossen/results/gr00t_handover-cube_rand"
 export MASTER_PORT=29500
 
-exec uv run torchrun \
+# use direct path bc singularity creates read-only filesystem
+exec .venv/bin/torchrun \
     --nproc_per_node="$NUM_GPUS" \
     --master_port="$MASTER_PORT" \
     gr00t/experiment/launch_finetune.py \

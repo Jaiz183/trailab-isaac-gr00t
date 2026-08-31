@@ -15,7 +15,6 @@ from gr00t.data.types import (
 def build_modality_config(
     yaml_path: str,
     action_horizon: int = 16,
-    language_key: str = "annotation.human.task_description",
 ) -> Dict[str, ModalityConfig]:
     """
     Builds a GR00T modality configuration dictionary from a dataset YAML file[cite: 1].
@@ -72,10 +71,6 @@ def build_modality_config(
             ),  # Use positive indices for action horizons[cite: 1]
             modality_keys=action_keys,
             action_configs=action_configs,
-        ),
-        "language": ModalityConfig(
-            delta_indices=[0],
-            modality_keys=[language_key],
         ),
     }
 

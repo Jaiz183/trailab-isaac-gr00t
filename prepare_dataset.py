@@ -41,6 +41,16 @@ def parse_args():
     )
     return parser.parse_args()
 
+def get_local_codebase_version(dataset_dir: str, dataset_name: str) -> str | None:
+    """Read the codebase_version directly from the dataset's meta/info.json.
+    Returns None if the file or key doesn't exist (e.g. dataset not yet converted at all)."""
+    info_path = os.path.join(dataset_dir, dataset_name, "meta", "info.json")
+    if not os.path.exists(info_path):
+        return None
+    with open(info_path, "r") as f:
+        info = json.load(f)
+    return info.get("codebase_version")
+
 
 if __name__ == "__main__":
     args = parse_args()
@@ -56,20 +66,25 @@ if __name__ == "__main__":
     joints = config["joints"]
     video_angles_map = config["video_angles"]
 
-    # 1. Unconditionally run conversion script (overwrite / force replacement)
-    print(f"Running conversion script on '{dataset_name}' at '{dataset_dir}'...")
-    subprocess.run(
-        args=[
-            PYTHON_BIN,
-            CONVERSION_SCRIPT,
-            "--repo-id",
-            dataset_name,
-            "--root",
-            dataset_dir,
-        ],
-        check=True,
-    )
-    print(f"Conversion script finished.")
+    # 1. Check version before running conversion
+    current_version = get_local_codebase_version(dataset_dir, dataset_name)
+
+    if current_version == "v2.1" or current_version == "v2.0":
+        print(f"Dataset '{dataset_name}' is already in local format (codebase_version={current_version}) — skipping conversion.")
+    else:
+        print(f"Running conversion script on '{dataset_name}' at '{dataset_dir}'...")
+        subprocess.run(
+            args=[
+                PYTHON_BIN,
+                CONVERSION_SCRIPT,
+                "--repo-id",
+                dataset_name,
+                "--root",
+                dataset_dir,
+            ],
+            check=True,
+        )
+        print(f"Conversion script finished.")
 
     # 2. Build modality dictionary
     modality_file = create_modality_file(joints, video_angles_map)
