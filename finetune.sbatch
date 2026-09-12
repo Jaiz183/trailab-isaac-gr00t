@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=gr00t_finetune_handover-cube_rand
+#SBATCH --job-name=gr00t_finetune_tower4_70_vague
 #SBATCH --partition=batch
 #SBATCH --nodes=1
 #SBATCH --ntasks=1              

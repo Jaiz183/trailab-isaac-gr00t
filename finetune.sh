@@ -1,8 +1,10 @@
 #!/bin/bash
-export DATASET="/raid/datasets/trossen/dataset/handover-cube_rand"
+DATASET_CONFIG="config/dataset_config.yaml"
+TRAINING_CONFIG="config/training_config.yaml"
+export DATASET="$(.venv/bin/python3 -c 'import sys, yaml; print(yaml.safe_load(open(sys.argv[1]))["dataset"]["path"])' "$DATASET_CONFIG")"
 export NUM_GPUS=2
 export PREP_MODALITY_FILE="/home/trossen/Desktop/models/trailab-isaac-gr00t/prepare_modality_config.py"
-export OUTPUT_DIR="/raid/datasets/trossen/results/gr00t_handover-cube_rand"
+export OUTPUT_DIR="$(.venv/bin/python3 -c 'import sys, yaml; print(yaml.safe_load(open(sys.argv[1]))["output_dir"])' "$TRAINING_CONFIG")"
 export MASTER_PORT=29500
 
 # use direct path bc singularity creates read-only filesystem
