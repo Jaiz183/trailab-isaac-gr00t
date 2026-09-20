@@ -7,6 +7,7 @@ import yaml
 
 CONVERSION_SCRIPT = "scripts/lerobot_conversion/convert_v3_to_v2.py"
 PYTHON_BIN = "python3"
+LEROBOT_EDIT = "lerobot-edit-dataset"
 
 
 def create_action_config(joints: list[str]) -> dict:
@@ -70,41 +71,56 @@ if __name__ == "__main__":
     dataset_path = os.path.abspath(config["dataset"]["path"].rstrip("/\\"))
     dataset_dir, dataset_name = os.path.split(dataset_path)
 
+    # Construct train, test, and val. splits.
+    train, val, test = config["split"]["train"], config["split"]["val"], config["split"]["test"]
+    splits = f"{{\"train\": {train}, \"val\": {val}, \"test\": {test}}}"
+    subprocess.run(args=[LEROBOT_EDIT,
+    "--repo_id", dataset_name,
+    "--root", dataset_dir,
+    "--operation.type", "split",
+    "--operation.splits", splits,
+    "--modal", "local"])
+
     joints = config["joints"]
     video_angles_map = config["video_angles"]
 
-    # 1. Check version before running conversion
-    current_version = get_local_codebase_version(dataset_dir, dataset_name)
+    # Run conversion script on all subdatasets.
+    subdataset_names = [f"{dataset_name}_{split}" for split in ["train", "val", "test"]]
 
-    if current_version == "v2.1" or current_version == "v2.0":
-        print(
-            f"Dataset '{dataset_name}' is already in local format (codebase_version={current_version}) — skipping conversion."
-        )
-    else:
-        print(f"Running conversion script on '{dataset_name}' at '{dataset_dir}'...")
-        subprocess.run(
-            args=[
-                PYTHON_BIN,
-                CONVERSION_SCRIPT,
-                "--repo-id",
-                dataset_name,
-                "--root",
-                dataset_dir,
-            ],
-            check=True,
-        )
-        print(f"Conversion script finished.")
+    for subdataset_name in subdataset_names:
+        subdataset_path = f"{dataset_dir}/{subdataset_name}"
+        # 1. Check version before running conversion
+        current_version = get_local_codebase_version(dataset_dir, subdataset_name)
 
-    # 2. Build modality dictionary
-    modality_file = create_modality_file(joints, video_angles_map)
+        if current_version == "v2.1" or current_version == "v2.0":
+            print(
+                f"Dataset '{subdataset_name}' is already in local format (codebase_version={current_version}) — skipping conversion."
+            )
+        else:
+            print(f"Running conversion script on '{subdataset_name}' at '{dataset_dir}'...")
+            subprocess.run(
+                args=[
+                    PYTHON_BIN,
+                    CONVERSION_SCRIPT,
+                    "--repo-id",
+                    subdataset_name,
+                    "--root",
+                    dataset_dir,
+                ],
+                check=True,
+            )
+            print(f"Conversion script finished.")
 
-    # 3. Create meta directory if it doesn't exist and save modality.json
-    meta_dir = os.path.join(dataset_path, "meta")
-    os.makedirs(meta_dir, exist_ok=True)
+        # 2. Build modality dictionary
+        modality_file = create_modality_file(joints, video_angles_map)
 
-    modality_path = os.path.join(meta_dir, "modality.json")
+        # 3. Create meta directory if it doesn't exist and save modality.json
+        meta_dir = os.path.join(subdataset_path, "meta")
+        os.makedirs(meta_dir, exist_ok=True)
 
-    print(f"Writing modality config to {modality_path}...")
-    with open(modality_path, mode="w") as f:
-        json.dump(modality_file, f, indent=2)
-    print(f"Modality config successfully written.")
+        modality_path = os.path.join(meta_dir, "modality.json")
+
+        print(f"Writing modality config to {modality_path}...")
+        with open(modality_path, mode="w") as f:
+            json.dump(modality_file, f, indent=2)
+        print(f"Modality config successfully written.")

@@ -1,5 +1,11 @@
 dataset:
-  path: /raid/datasets/trossen/dataset/gr00t_handover-cube_rand
+  path: /raid/datasets/trossen/dataset/handover-cube_rand
+
+split:
+  train: 0.8
+  val: 0.1
+  test: 0.1
+
 video_angles:
   observation.images.cam_high: cam_high
   observation.images.cam_left_wrist: cam_left_wrist

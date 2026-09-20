@@ -1,6 +1,6 @@
-num_steps: 25000
+num_steps: 40000
 num_saves: 5
 action_horizon: 16
 modality_keys: []
 test_episodes: [0]
-output_dir: /raid/datasets/trossen/results/gr00t_handover-cube_rand
+output_dir: /raid/datasets/trossen/results/handover-cube_rand
