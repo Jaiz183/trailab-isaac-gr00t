@@ -1,0 +1,42 @@
+dataset:
+  repo_id: tower4_70_vague_gr00t
+  root: /home/trossen/Desktop/TRAILAB/dataset/eval
+  fps: 30
+  reset_time_s: 15
+  episode_time_s: 300
+  num_episodes: 1
+  push_to_hub: false
+  single_task: "Construct a stable tower using two cuboids, upright, as pillar supports, one thin rectangular prism placed horizontally across the supports, and one cube centered on top."
+
+robot:
+  type: bi_widowxai_follower_robot
+  left_arm_ip_address: 192.168.1.5
+  right_arm_ip_address: 192.168.1.4
+  id: bimanual_follower
+  cameras:
+    cam_high:
+      type: intelrealsense
+      serial_number_or_name: "419122270039"
+      width: 640
+      height: 480
+      fps: 30
+    cam_low:
+      type: intelrealsense
+      serial_number_or_name: "412622271941"
+      width: 640
+      height: 480
+      fps: 30
+    cam_left_wrist:
+      type: intelrealsense
+      serial_number_or_name: "412622271118"
+      width: 640
+      height: 480
+      fps: 30
+    cam_right_wrist:
+      type: intelrealsense
+      serial_number_or_name: "412622272745"
+      width: 640
+      height: 480
+      fps: 30
+
+display_data: true

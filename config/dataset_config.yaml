@@ -1,5 +1,5 @@
 dataset:
-  path: /raid/datasets/trossen/dataset/tower4_70_vague
+  path: /raid/datasets/trossen/dataset/gr00t_handover-cube_rand
 video_angles:
   observation.images.cam_high: cam_high
   observation.images.cam_left_wrist: cam_left_wrist

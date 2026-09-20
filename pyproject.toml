@@ -56,11 +56,13 @@ dependencies = [
     "tensorrt-cu13>=10.15.1.29; platform_machine == 'aarch64'",
     "tensorrt-cu12-libs>=10.15.1.29; platform_machine == 'x86_64'",
     "tensorrt-cu13-libs>=10.15.1.29; platform_machine == 'aarch64'",
-    "trossen-arm>=1.11.0",
+    # SDK major/minor must match this rig's controller firmware.
+    "trossen-arm==1.10.0",
     "tabulate>=0.10.0",
 ]
 
 [project.optional-dependencies]
+robot = ["pyrealsense2==2.56.5.9235; platform_machine == 'x86_64' and sys_platform == 'linux'"]
 dev = [
     "boto3",
     "ruff",

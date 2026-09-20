@@ -18,4 +18,4 @@ singularity exec --nv \
   -B /home/trossen/Desktop/models/trailab-isaac-gr00t:/home/trossen/Desktop/models/trailab-isaac-gr00t \
   --pwd /home/trossen/Desktop/models/trailab-isaac-gr00t \
   /home/trossen/Desktop/models/trailab-isaac-gr00t/singularity/gr00t.sif \
-  ./finetune.sh
+  .venv/bin/python3 ./finetune.py
