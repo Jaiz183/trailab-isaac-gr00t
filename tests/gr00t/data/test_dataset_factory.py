@@ -26,7 +26,6 @@ real LeRobot datasets. We test the parts that can be isolated:
 from unittest.mock import MagicMock, patch
 
 import numpy as np
-import pytest
 
 
 def _make_mock_config():
@@ -46,6 +45,7 @@ def _make_mock_config():
     dataset_spec.dataset_paths = ["/fake/dataset_path"]
     dataset_spec.embodiment_tag = "new_embodiment"
     dataset_spec.mix_ratio = 1.0
+    dataset_spec.val_dataset_path = None
     config.data.datasets = [dataset_spec]
 
     config.data.modality_configs = {
@@ -116,11 +116,33 @@ class TestDatasetFactory:
         assert train_ds is not None
         assert eval_ds is None
 
-    def test_build_rejects_eval_strategy(self):
+    def test_build_creates_eval_mixture(self):
         from gr00t.data.dataset.factory import DatasetFactory
 
         config = _make_mock_config()
         config.training.eval_strategy = "steps"
         factory = DatasetFactory(config)
-        with pytest.raises(AssertionError, match="does not support evaluation"):
-            factory.build(MagicMock())
+        mock_processor = MagicMock()
+        mock_processor.set_statistics = MagicMock()
+
+        mock_dataset = MagicMock()
+        mock_dataset.__len__ = MagicMock(return_value=10)
+        mock_dataset.get_shard_length = MagicMock(return_value=100)
+        mock_dataset.embodiment_tag = type("ET", (), {"value": "new_embodiment"})()
+        mock_dataset.get_dataset_statistics.return_value = {}
+
+        with (
+            patch("gr00t.data.dataset.factory.generate_stats"),
+            patch("gr00t.data.dataset.factory.generate_rel_stats"),
+            patch(
+                "gr00t.data.dataset.factory.ShardedSingleStepDataset",
+                return_value=mock_dataset,
+            ),
+            patch("torch.distributed.is_initialized", return_value=False),
+        ):
+            train_ds, eval_ds = factory.build(mock_processor)
+
+        assert train_ds is not None
+        assert eval_ds is not None
+        assert train_ds.training is True
+        assert eval_ds.training is False

@@ -1,5 +1,5 @@
 dataset:
-  path: /raid/datasets/trossen/dataset/handover-cube_rand
+  path: /raid/datasets/trossen/dataset/tower4_70_vague # root name (no train, val, test suffix)
 
 split:
   train: 0.8

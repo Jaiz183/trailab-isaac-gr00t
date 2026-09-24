@@ -37,10 +37,31 @@ class DatasetFactory:
         self, processor: BaseProcessor
     ) -> tuple[ShardedMixtureDataset, ShardedMixtureDataset | None]:
         """Build the dataset. Returns a tuple of (train_dataset, eval_dataset)."""
-        assert self.config.training.eval_strategy == "no", (
-            "Sharded dataset does not support evaluation sets"
+        train_dataset = self._build_mixture(
+            processor, training=True, dataset_path_attr="dataset_paths"
+        )
+        if self.config.training.eval_strategy == "no":
+            return train_dataset, None
+
+        train_statistics = train_dataset.get_dataset_statistics()
+        eval_dataset = self._build_mixture(
+            processor, training=False, dataset_path_attr="val_dataset_path"
         )
 
+        # The validation mixture shares the processor with training. Restore the
+        # training normalization after validation construction so both datasets
+        # use the same action/state scale.
+        if self.config.data.override_pretraining_statistics:
+            processor.set_statistics(train_statistics, override=True)
+
+        return train_dataset, eval_dataset
+
+    def _build_mixture(
+        self,
+        processor: BaseProcessor,
+        training: bool,
+        dataset_path_attr: str,
+    ) -> ShardedMixtureDataset:
         all_datasets = []
         all_weights = []
         for dataset_spec in tqdm(
@@ -48,8 +69,16 @@ class DatasetFactory:
             total=len(self.config.data.datasets),
             desc="Initializing datasets",
         ):
+            if dataset_path_attr == "val_dataset_path":
+                validation_path = dataset_spec.val_dataset_path
+                dataset_paths = (
+                    [validation_path] if validation_path else dataset_spec.dataset_paths
+                )
+            else:
+                dataset_paths = dataset_spec.dataset_paths
+
             datasets = []
-            for dataset_path in dataset_spec.dataset_paths:
+            for dataset_path in dataset_paths:
                 embodiment_tag = dataset_spec.embodiment_tag
                 assert embodiment_tag is not None, "Embodiment tag is required"
                 assert self.config.data.mode == "single_turn", "Only single turn mode is supported"
@@ -84,15 +113,12 @@ class DatasetFactory:
                 "this overrides per-dataset mix_ratio sampling weights."
             )
 
-        return (
-            ShardedMixtureDataset(
-                datasets=all_datasets,
-                weights=all_weights,
-                processor=processor,
-                seed=self.config.data.seed,
-                training=True,
-                num_shards_per_epoch=self.config.data.num_shards_per_epoch,
-                override_pretraining_statistics=self.config.data.override_pretraining_statistics,
-            ),
-            None,
+        return ShardedMixtureDataset(
+            datasets=all_datasets,
+            weights=all_weights,
+            processor=processor,
+            seed=self.config.data.seed,
+            training=training,
+            num_shards_per_epoch=self.config.data.num_shards_per_epoch,
+            override_pretraining_statistics=self.config.data.override_pretraining_statistics,
         )

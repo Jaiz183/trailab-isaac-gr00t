@@ -9,7 +9,7 @@ dataset_config = "config/dataset_config.yaml"
 training_config = "config/training_config.yaml"
 
 with open(dataset_config) as config_file:
-    dataset = yaml.safe_load(config_file)["dataset"]["path"]
+    dataset_root = yaml.safe_load(config_file)['dataset']['path']
 
 num_gpus = "2"
 prep_modality_file = (
@@ -19,17 +19,19 @@ prep_modality_file = (
 with open(training_config) as config_file:
     training = yaml.safe_load(config_file)
 
-output_dir = training["output_dir"]
+output_dir = f"{training['output_dir']}/{training['model_name']}"
 max_steps = training["num_steps"]
 num_saves = training["num_saves"]
 save_steps = ceil(max_steps / num_saves)
+resume_from_checkpoint = training["resume_from_checkpoint"]
+val_step_size = training["val_step_size"]
+validation_dataset_path = training.get("validation_dataset_path", f"{dataset_root}_val")
+
 
 master_port = "29500"
 
 torchrun = ".venv/bin/torchrun"
-os.execvpe(
-    torchrun,
-    [
+command = [
         torchrun,
         "--nproc_per_node=" + num_gpus,
         "--master_port=" + master_port,
@@ -37,7 +39,9 @@ os.execvpe(
         "--base-model-path",
         "nvidia/GR00T-N1.7-3B",
         "--dataset-path",
-        dataset,
+        f"{dataset_root}_train",
+        "--validation-dataset-path",
+        validation_dataset_path,
         "--embodiment-tag",
         "NEW_EMBODIMENT",
         "--modality-config-path",
@@ -66,6 +70,17 @@ os.execvpe(
         "0.08",
         "--dataloader-num-workers",
         "4",
-    ],
+        "--eval-strategy",
+        "steps",
+        "--eval-steps",
+        str(val_step_size),
+    ]
+
+if resume_from_checkpoint:
+    command.append(f"--resume-from-checkpoint")
+
+os.execvpe(
+    torchrun,
+    command,
     os.environ,
 )

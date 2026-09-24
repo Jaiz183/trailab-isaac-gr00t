@@ -247,6 +247,12 @@ class TestShardedMixtureDataset:
         total_shards = sum(len(d) for d in mixture.datasets)
         assert len(schedule) == total_shards
 
+    def test_eval_mode_iteration_is_finite(self):
+        mixture = self._make_mixture(num_datasets=1, training=False)
+        samples = list(mixture)
+
+        assert len(samples) == 5 * 100
+
     def test_get_dataset_statistics(self):
         mixture = self._make_mixture()
         stats = mixture.get_dataset_statistics()

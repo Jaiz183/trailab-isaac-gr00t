@@ -1,6 +1,8 @@
-num_steps: 40000
+num_steps: 50000
 num_saves: 5
 action_horizon: 16
 modality_keys: []
-test_episodes: [0]
-output_dir: /raid/datasets/trossen/results/handover-cube_rand
+output_dir: /raid/datasets/trossen/results
+model_name: gr00t_tower4_70_vague_long
+val_step_size: 500
+resume_from_checkpoint: True # True or False

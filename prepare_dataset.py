@@ -72,14 +72,14 @@ if __name__ == "__main__":
     dataset_dir, dataset_name = os.path.split(dataset_path)
 
     # Construct train, test, and val. splits.
+    # Explicitly fail if splitting fails w/ check=True.
     train, val, test = config["split"]["train"], config["split"]["val"], config["split"]["test"]
     splits = f"{{\"train\": {train}, \"val\": {val}, \"test\": {test}}}"
-    subprocess.run(args=[LEROBOT_EDIT,
-    "--repo_id", dataset_name,
-    "--root", dataset_dir,
+    subprocess.run(args=[
+        LEROBOT_EDIT,
+    "--repo_id", f"{dataset_dir}/{dataset_name}",
     "--operation.type", "split",
-    "--operation.splits", splits,
-    "--modal", "local"])
+    "--operation.splits", splits],check=True)
 
     joints = config["joints"]
     video_angles_map = config["video_angles"]

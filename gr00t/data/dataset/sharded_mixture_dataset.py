@@ -450,6 +450,13 @@ class ShardedMixtureDataset(IterableDataset):
             # Clean up cached shard to free memory
             self.delete_cached_shard()
 
+            if not self.training and self.curr_shard_index >= len(
+                self.worker_shard_sampling_schedule
+            ) - 1:
+                self._executor.shutdown(wait=True)
+                self._executor = None
+                return
+
     def cache_next_shard(self):
         """
         Start background caching of the next shard using ThreadPoolExecutor.

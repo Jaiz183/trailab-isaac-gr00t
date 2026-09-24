@@ -57,6 +57,7 @@ if __name__ == "__main__":
         load_modality_config(ft_config.modality_config_path)
 
     dataset_paths = [path for path in ft_config.dataset_path.split(os.pathsep) if path]
+    validation_dataset_path = ft_config.validation_dataset_path
 
     config = get_default_config().load_dict(
         {
@@ -65,6 +66,7 @@ if __name__ == "__main__":
                 "datasets": [
                     {
                         "dataset_paths": dataset_paths,
+                        "val_dataset_path": validation_dataset_path,
                         "mix_ratio": 1.0,
                         "embodiment_tag": embodiment_tag,
                     }
@@ -117,6 +119,8 @@ if __name__ == "__main__":
     config.training.weight_decay = ft_config.weight_decay
     config.training.warmup_ratio = ft_config.warmup_ratio
     config.training.wandb_project = ft_config.wandb_project
+    config.training.eval_strategy = ft_config.eval_strategy
+    config.training.eval_steps = ft_config.eval_steps
 
     config.data.shard_size = ft_config.shard_size
     config.data.episode_sampling_rate = ft_config.episode_sampling_rate

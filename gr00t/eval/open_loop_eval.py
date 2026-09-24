@@ -228,7 +228,7 @@ def evaluate_single_trajectory(
         state_keys=state_keys,
         action_keys=action_keys,
         execution_horizon=execution_horizon,
-        save_plot_path=save_plot_path or f"/tmp/open_loop_eval/traj_{traj_id}.jpeg",
+        save_plot_path=save_plot_path,
     )
 
     return mse, mae
@@ -266,7 +266,7 @@ class ArgsConfig:
     denoising_steps: int = 4
     """Number of denoising steps to use."""
 
-    save_plot_path: str | None = None
+    save_plot_path: str | None = "/tmp/open_loop_eval"
     """Path to save the plot to."""
 
     modality_keys: list[str] | None = None
@@ -349,7 +349,7 @@ def main(args: ArgsConfig):
             args.modality_keys,
             steps=args.steps,
             execution_horizon=args.execution_horizon,
-            save_plot_path=args.save_plot_path,
+            save_plot_path=f"{args.save_plot_path}/traj_{traj_id}",
         )
         logging.info(f"MSE for trajectory {traj_id}: {mse}, MAE: {mae}")
         all_mse.append(mse)

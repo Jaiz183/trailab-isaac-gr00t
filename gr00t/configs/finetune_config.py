@@ -39,6 +39,9 @@ class FinetuneConfig:
     embodiment_tag: str
     """Embodiment tag (name or value, case-insensitive). See EmbodimentTag for known tags."""
 
+    validation_dataset_path: str | None = None
+    """Optional held-out dataset root used for validation metrics."""
+
     modality_config_path: str | None = None
     """
     Path to a Python file defining the modality configuration for the given embodiment. 
@@ -195,6 +198,12 @@ class FinetuneConfig:
     """If True, skip loading model weights from base_model_path (architecture only).
     The processor (tokenizer/config) is still loaded from base_model_path.
     Useful for CI/testing to skip the slow checkpoint shard loading."""
+
+    eval_strategy: str = "no"
+    """Defines evaluation strategy for reporting metrics on validation dataset."""
+
+    eval_steps: int = 500
+    """Used when eval_strategy="steps" to determine number of steps between consecutive validation passes."""
 
     def __post_init__(self) -> None:
         if self.gradient_accumulation_steps < 1:

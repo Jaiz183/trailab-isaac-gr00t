@@ -1,0 +1,4 @@
+save_path: /home/trossen/Desktop/models/trailab-isaac-gr00t/open_loop_inference_results # path to dir. where results are saved
+checkpoint: [20000]
+test_episodes: [0]
+dataset_type: ["train", "test"] # test, train, or val only
